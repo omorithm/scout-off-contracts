@@ -1,18 +1,21 @@
 #!/usr/bin/env bash
 # ScoutChain — generate TypeScript bindings for all contracts
-# Usage: ./scripts/generate-bindings.sh [testnet|mainnet]
+# Usage: ./scripts/generate-bindings.sh [testnet|mainnet|local]
 # Requires .env.contracts to exist (written by deploy.sh)
 set -euo pipefail
 
+source "$(dirname "$0")/network.sh" "${1:-}"
 # Reference stellar-cli version the generated bindings were last validated
-# against. Single source of truth: .stellar-cli-version (also read by
+# against. Single source of truth: ci/stellar-cli-version (also read by
 # scripts/install-stellar-cli.sh, which CI uses to install a checksum-verified
 # release binary).
 #
 # A different locally installed CLI version only warns — set
 # STRICT_STELLAR_CLI_VERSION=1 to make it fatal. The "Verify ABI function
 # coverage in generated bindings" CI step structurally checks the output.
-REFERENCE_STELLAR_CLI_VERSION="$(tr -d '[:space:]' < "$(dirname "${BASH_SOURCE[0]}")/../.stellar-cli-version")"
+# shellcheck source=lib/check-stellar-cli.sh
+source "$(dirname "${BASH_SOURCE[0]}")/lib/check-stellar-cli.sh"
+REFERENCE_STELLAR_CLI_VERSION="$PINNED_STELLAR_CLI_VERSION"
 
 actual_version=$(stellar --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 || true)
 if [[ "$actual_version" != "$REFERENCE_STELLAR_CLI_VERSION" ]]; then

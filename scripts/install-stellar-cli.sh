@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 # Install the pinned stellar-cli release binary and verify its SHA-256.
-# The version lives in .stellar-cli-version (single source of truth).
+# The version lives in ci/stellar-cli-version (single source of truth).
 # Usage: ./scripts/install-stellar-cli.sh [install_dir]   (default: ~/.stellar/bin)
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-VERSION="$(tr -d '[:space:]' < "$ROOT/.stellar-cli-version")"
+VERSION="$(tr -d '[:space:]' < "$ROOT/ci/stellar-cli-version")"
 INSTALL_DIR="${1:-$HOME/.stellar/bin}"
 
 # SHA-256 of the official release tarballs for $VERSION. Update together with
-# .stellar-cli-version (see the release's asset digests on GitHub).
+# ci/stellar-cli-version (see the release's asset digests on GitHub).
 case "$VERSION/$(uname -m)" in
   28.0.0/x86_64)
     TARGET="x86_64-unknown-linux-gnu"
